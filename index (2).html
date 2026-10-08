@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>ملاحظات الجدول الأسبوعي | شعبة A</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+:root{
+  --bg:#0b1120;
+  --panel:#111a2d;
+  --panel2:#172238;
+  --line:rgba(255,255,255,.10);
+  --text:#f7f9ff;
+  --muted:#aab5cc;
+  --accent:#7c5cff;
+  --accent2:#19c7b8;
+  --gold:#ffc857;
+  --danger:#ff6b81;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Cairo",Tahoma,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(124,92,255,.20),transparent 30%),
+    radial-gradient(circle at 90% 10%,rgba(25,199,184,.15),transparent 28%),
+    linear-gradient(145deg,#070c17,#0d1526 50%,#0a1020);
+  min-height:100vh;
+}
+button,textarea{font-family:inherit}
+.container{width:min(1150px,92%);margin:auto}
+.hero{padding:42px 0 25px}
+.hero-box{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(25,199,184,.08));
+  border:1px solid var(--line);border-radius:30px;padding:34px;
+  box-shadow:var(--shadow);
+}
+.hero-box:before,.hero-box:after{
+  content:"";position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none
+}
+.hero-box:before{width:220px;height:220px;background:rgba(124,92,255,.16);left:-80px;top:-100px}
+.hero-box:after{width:180px;height:180px;background:rgba(25,199,184,.12);right:-60px;bottom:-90px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+  border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--line);
+  color:#dce3f5;font-size:13px;font-weight:700
+}
+.badge span{color:var(--gold)}
+h1{font-size:clamp(28px,5vw,48px);margin:18px 0 10px;line-height:1.2}
+.hero p{color:#d2daea;max-width:850px;line-height:2;margin:8px 0}
+.author{
+  display:inline-flex;margin-top:17px;padding:9px 15px;border-radius:12px;
+  background:rgba(124,92,255,.13);border:1px solid rgba(124,92,255,.28);
+  color:#e9e4ff;font-weight:700
+}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:25px
+}
+.stat{background:rgba(0,0,0,.16);border:1px solid var(--line);border-radius:18px;padding:17px}
+.stat b{display:block;font-size:25px}.stat small{color:var(--muted)}
+
+.section-title{margin:32px 0 15px;display:flex;align-items:end;justify-content:space-between;gap:12px}
+.section-title h2{margin:0;font-size:23px}
+.section-title p{margin:0;color:var(--muted);font-size:13px}
+
+.days{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
+  background:rgba(255,255,255,.035);padding:9px;border:1px solid var(--line);border-radius:20px
+}
+.day-btn{
+  display:block;text-decoration:none;text-align:center;
+  border:0;color:#dce3f5;background:transparent;padding:13px 8px;border-radius:14px;
+  cursor:pointer;font-weight:800;transition:.2s
+}
+.day-btn:hover{background:rgba(255,255,255,.06)}
+.day-btn.active{background:linear-gradient(135deg,var(--accent),#5b43d6);color:#fff;box-shadow:0 8px 25px rgba(124,92,255,.25)}
+.day-btn small{display:block;color:inherit;opacity:.7;font-weight:600;margin-top:2px}
+
+.day-panel{display:none;margin-top:18px}
+.day-panel.active{display:block}
+.day-panel:target{display:block}
+body:has(#mon:target) #sun,
+body:has(#tue:target) #sun,
+body:has(#wed:target) #sun,
+body:has(#thu:target) #sun{display:none}
+body:has(#mon:target) #mon,
+body:has(#tue:target) #tue,
+body:has(#wed:target) #wed,
+body:has(#thu:target) #thu{display:block}
+.schedule{
+  display:grid;gap:14px
+}
+.course{
+  background:linear-gradient(145deg,rgba(23,34,56,.95),rgba(13,21,38,.96));
+  border:1px solid var(--line);border-radius:22px;padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18)
+}
+.course-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.course h3{margin:0 0 7px;font-size:19px}
+.meta{color:var(--muted);font-size:13px;line-height:1.9}
+.time{
+  flex:none;padding:9px 12px;border-radius:12px;background:rgba(25,199,184,.10);
+  color:#8cebe3;border:1px solid rgba(25,199,184,.20);font-weight:800;font-size:13px
+}
+.tag{
+  display:inline-block;margin-top:9px;padding:4px 9px;border-radius:999px;
+  background:rgba(255,200,87,.09);color:#ffd879;font-size:11px;font-weight:700
+}
+.note-label{display:block;margin:17px 0 8px;color:#dbe3f2;font-size:13px;font-weight:700}
+textarea{
+  width:100%;min-height:120px;resize:vertical;color:var(--text);
+  background:#0a1221;border:1px solid rgba(255,255,255,.09);outline:none;
+  border-radius:15px;padding:13px;line-height:1.9;font-size:14px;
+  transition:.2s
+}
+textarea:focus{border-color:rgba(124,92,255,.65);box-shadow:0 0 0 3px rgba(124,92,255,.10)}
+.note-box{
+  min-height:95px;
+  background:linear-gradient(145deg,#0b1425,#0a1220);
+  border:1px solid rgba(124,92,255,.18);
+  border-radius:15px;
+  padding:15px;
+  color:#dce4f5;
+  line-height:2;
+  white-space:pre-wrap;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.note-box:empty:before{content:"لا توجد ملاحظات لهذه المادة حالياً.";color:#77849e}
+.save-state{margin-top:8px;color:#7fded5;font-size:11px;min-height:17px}
+
+.general{
+  margin-top:18px;background:linear-gradient(135deg,rgba(124,92,255,.10),rgba(25,199,184,.07));
+  border:1px solid var(--line);border-radius:22px;padding:20px
+}
+.general h3{margin:0 0 10px}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 40px}
+.action{
+  border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;
+  border-radius:13px;padding:11px 15px;cursor:pointer;font-weight:700
+}
+.action.primary{background:linear-gradient(135deg,var(--accent),#5b43d6);border-color:transparent}
+.action.danger{color:#ffb3bf}
+
+footer{
+  border-top:1px solid var(--line);padding:25px 0 35px;text-align:center;color:var(--muted);font-size:12px
+}
+footer strong{color:#e7eaff}
+
+.empty{color:var(--muted);padding:20px;text-align:center}
+.info-strip{
+  margin:24px 0 40px;
+  padding:15px 18px;
+  border:1px solid rgba(25,199,184,.18);
+  background:rgba(25,199,184,.06);
+  border-radius:16px;
+  color:#bfece8;
+  text-align:center;
+  font-size:13px;
+}
+.info-strip strong{color:#fff}
+
+
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rgba(7,12,23,.80);border-bottom:1px solid rgba(255,255,255,.07)}
+.topbar-inner{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-weight:800;font-size:14px;display:flex;align-items:center;gap:9px}.brand-mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.live-date{color:var(--muted);font-size:11px}.quick-nav{display:flex;gap:7px;flex-wrap:wrap}.quick-day-link{border:1px solid var(--line);background:rgba(255,255,255,.04);color:#dce3f5;border-radius:10px;padding:7px 10px;cursor:pointer;font-family:inherit;font-weight:700;font-size:11px;text-decoration:none}.quick-day-link:hover{background:rgba(124,92,255,.15)}
+.hero-box{animation:heroIn .7s ease both}@keyframes heroIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.stat{transition:.22s}.stat:hover{transform:translateY(-3px)}
+.progress-wrap{margin-top:18px;padding:15px 17px;border:1px solid var(--line);border-radius:18px;background:rgba(0,0,0,.14)}
+.progress-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:9px}.progress-head span:last-child{color:#8cebe3;font-weight:800}
+.progress-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}.progress-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .8s}
+.week-overview{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:14px}.overview-card{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:14px;padding:10px;text-align:center;cursor:pointer;transition:.2s}.overview-card:hover,.overview-card.today{background:rgba(124,92,255,.12);border-color:rgba(124,92,255,.3)}.overview-card b{display:block;font-size:12px}.overview-card small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.search-box{margin-top:18px;display:flex;gap:9px}.search-box input{flex:1;min-width:0;background:#0a1221;border:1px solid var(--line);color:#fff;border-radius:14px;padding:12px 14px;outline:none;font-family:inherit}.search-box button{border:0;border-radius:14px;padding:0 17px;color:#fff;font-weight:800;background:linear-gradient(135deg,var(--accent),#5b43d6);cursor:pointer;font-family:inherit}.no-results{display:none;margin-top:12px;padding:15px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px}
+.course{transition:transform .22s,border-color .22s}.course:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.24)}.note-box{position:relative;overflow:hidden}.note-box:after{content:"";position:absolute;right:-25px;bottom:-45px;width:90px;height:90px;border-radius:50%;background:rgba(124,92,255,.06)}
+.today-ribbon{display:inline-flex;margin-bottom:10px;padding:5px 9px;border-radius:999px;background:rgba(255,200,87,.08);border:1px solid rgba(255,200,87,.16);color:#ffd879;font-size:10px;font-weight:800}
+#backTop{position:fixed;left:18px;bottom:18px;width:43px;height:43px;border-radius:50%;border:1px solid var(--line);background:rgba(17,26,45,.94);color:#fff;cursor:pointer;display:none;z-index:40;font-size:18px}#backTop.show{display:block}
+@media print{.topbar,.quick-nav,.search-box,#backTop,.days,.week-overview{display:none!important}.day-panel{display:block!important}.hero-box,.course,.general{box-shadow:none}}
+@media(max-width:700px){.topbar-inner{flex-wrap:wrap;padding:7px 0}.quick-nav{width:100%;justify-content:center}.week-overview{gap:4px}.overview-card{padding:8px 3px}.overview-card b{font-size:10px}.overview-card small{font-size:8px}}
+
+@media(max-width:700px){
+  .hero{padding-top:18px}
+  .hero-box{padding:24px 18px;border-radius:22px}
+  .stats{grid-template-columns:1fr}
+  .days{grid-template-columns:repeat(5,1fr);gap:4px;padding:6px}
+  .day-btn{font-size:11px;padding:10px 3px}
+  .day-btn small{font-size:9px}
+  .course-top{flex-direction:column}
+  .time{width:100%;text-align:center}
+  h1{font-size:29px}
+}
+
+.creator-badge{
+  position:fixed;
+  top:14px;
+  left:16px;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  border:1px solid rgba(124,92,255,.45);
+  border-radius:14px;
+  background:rgba(10,16,30,.72);
+  backdrop-filter:blur(14px);
+  color:#dfe7ff;
+  font-size:11px;
+  font-weight:700;
+  box-shadow:
+    0 0 8px rgba(124,92,255,.28),
+    0 0 22px rgba(124,92,255,.15),
+    inset 0 0 15px rgba(124,92,255,.05);
+  animation:creatorGlow 3s ease-in-out infinite;
+}
+.creator-badge strong{
+  color:#fff;
+  background:linear-gradient(90deg,#a78bfa,#67e8f9,#a78bfa);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:nameShine 3s linear infinite;
+}
+.creator-spark{
+  color:#8b7cff;
+  font-size:15px;
+  text-shadow:0 0 7px #8b7cff,0 0 16px #6d5dfc;
+  animation:sparkPulse 1.8s ease-in-out infinite;
+}
+@keyframes creatorGlow{
+  0%,100%{box-shadow:0 0 8px rgba(124,92,255,.25),0 0 22px rgba(124,92,255,.12),inset 0 0 15px rgba(124,92,255,.04)}
+  50%{box-shadow:0 0 12px rgba(124,92,255,.5),0 0 32px rgba(103,232,249,.18),inset 0 0 20px rgba(124,92,255,.08)}
+}
+@keyframes nameShine{to{background-position:200% center}}
+@keyframes sparkPulse{0%,100%{transform:scale(1) rotate(0deg);opacity:.75}50%{transform:scale(1.25) rotate(12deg);opacity:1}}
+@media(max-width:700px){
+  .creator-badge{
+    top:9px;
+    left:9px;
+    font-size:9px;
+    padding:7px 9px;
+    border-radius:11px;
+  }
+  .creator-spark{font-size:12px}
+}
+
+</style>
+</head>
+
+<div class="creator-badge">
+  <span class="creator-spark">💻</span>
+  <span>تم تصميم هذا الموقع بواسطة <strong>أحمد حاتم</strong></span>
+</div>
+
+<body>
+<div class="topbar"><div class="container topbar-inner">
+<div class="brand"><span class="brand-mark">A</span> ملاحظات شعبة A</div>
+<div class="live-date" id="liveDate">الفصل الأول 2026 / 2027</div>
+<div class="quick-nav">
+<a class="quick-day-link" href="#sun">الأحد</a><a class="quick-day-link" href="#mon">الاثنين</a><a class="quick-day-link" href="#tue">الثلاثاء</a><a class="quick-day-link" href="#wed">الأربعاء</a><a class="quick-day-link" href="#thu">الخميس</a>
+</div></div></div>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-box">
+      <div class="badge">🎓 <span>شعبة A</span> · تقنيات الشبكات وبرمجيات الحاسوب</div>
+      <h1>ملاحظات الجدول الأسبوعي</h1>
+      <p>
+        هذا الموقع موجه لطلبة <strong>تقنيات الشبكات وبرمجيات الحاسوب – شعبة A</strong>.
+        يمكنك من خلاله كتابة وحفظ ملاحظاتك لكل مادة حسب أيام الدوام، مع عرض وقت المادة والقاعـة ونوع المحاضرة.
+      </p>
+      <div class="author">✨ تم تصميم هذا الموقع بواسطة أحمد حاتم</div>
+
+      <div class="stats">
+        <div class="stat"><b>5</b><small>أيام دراسية</small></div>
+        <div class="stat"><b>10</b><small>مواد / محاضرات عملية ونظرية</small></div>
+        <div class="stat"><b>2026 / 2027</b><small>الفصل الدراسي الأول</small></div>
+      </div>
+    </div>
+  </div>
+<div class="progress-wrap">
+<div class="progress-head"><span>📖 الملاحظات المنشورة</span><span id="noteCount">0 ملاحظات</span></div>
+<div class="progress-bar"><i id="progressBar"></i></div>
+</div>
+</div></div></header>
+
+<main class="container">
+  <div class="section-title">
+    <div>
+      <h2>📚 اختر اليوم</h2>
+      <p>ستظهر لك المواد الخاصة بذلك اليوم مع مساحة خاصة للملاحظات.</p>
+    </div>
+  </div>
+
+  <div class="search-box">
+<input id="searchInput" type="search" placeholder="🔎 ابحث عن مادة أو مدرس أو قاعة...">
+<button id="searchBtn">بحث</button>
+</div>
+<div class="no-results" id="noResults">لم يتم العثور على نتيجة مطابقة.</div>
+<div class="week-overview">
+<a class="overview-card" data-jump="sun" href="#sun"><b>الأحد</b><small>3 محاضرات</small></a>
+<a class="overview-card" data-jump="mon" href="#mon"><b>الاثنين</b><small>2 محاضرة</small></a>
+<a class="overview-card" data-jump="tue" href="#tue"><b>الثلاثاء</b><small>3 محاضرات</small></a>
+<a class="overview-card" data-jump="wed" href="#wed"><b>الأربعاء</b><small>2 محاضرة</small></a>
+<a class="overview-card" data-jump="thu" href="#thu"><b>الخميس</b><small>2 محاضرة</small></a>
+</div>
+<div class="days" role="tablist">
+    <a class="day-btn active" href="#sun" data-day="sun">الأحد<small>اليوم 1</small></a>
+    <a class="day-btn" href="#mon" data-day="mon">الاثنين<small>اليوم 2</small></a>
+    <a class="day-btn" href="#tue" data-day="tue">الثلاثاء<small>اليوم 3</small></a>
+    <a class="day-btn" href="#wed" data-day="wed">الأربعاء<small>اليوم 4</small></a>
+    <a class="day-btn" href="#thu" data-day="thu">الخميس<small>اليوم 5</small></a>
+  </div>
+
+  <section id="sun" class="day-panel active">
+    <div class="section-title"><h2>الأحد</h2><p>3 محاضرات</p></div>
+    <div class="schedule">
+      <article class="course">
+        <div class="course-top">
+          <div><h3>فيجوال بيسك / نظري</h3><div class="meta">القاعة: ق18 · المدرس: ست شهلة عبدالوهاب عبد القادر</div><span class="tag">نظري</span></div>
+          <div class="time">8:30 – 9:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا ملاحظات محاضرة فيجوال بيسك من داخل ملف index.html.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>اللغة الإنكليزية</h3><div class="meta">القاعة: ق17 · المدرس: ست مي حسين علي</div><span class="tag">نظري</span></div>
+          <div class="time">9:30 – 11:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا ملاحظات اللغة الإنكليزية من داخل ملف index.html.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>إدارة الشبكات / نظري</h3><div class="meta">القاعة: ق18 · المدرس: د. عبد الستار محمد خضر</div><span class="tag">نظري</span></div>
+          <div class="time">11:30 – 1:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا ملاحظات إدارة الشبكات من داخل ملف index.html.</div>
+      </article>
+    </div>
+    <div class="general"><h3>📌 ملاحظات عامة ليوم الأحد</h3><textarea data-key="sun_general" placeholder="واجبات، تنبيهات، مواعيد، أسئلة تريد مراجعتها..."></textarea><div class="save-state"></div></div>
+  </section>
+
+  <section id="mon" class="day-panel">
+    <div class="section-title"><h2>الاثنين</h2><p>محاضرتان عمليتان</p></div>
+    <div class="schedule">
+      <article class="course">
+        <div class="course-top">
+          <div><h3>فيجوال بيسك / عملي</h3><div class="meta">القاعة: مختبر شبكات · المدرسون: ست باسمة محمود عبيد، ست رغد حكمت متي</div><span class="tag">عملي</span></div>
+          <div class="time">8:30 – 11:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا خطوات العمل والأكواد وملاحظات مختبر فيجوال بيسك.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>إدارة الشبكات / عملي</h3><div class="meta">القاعة: مختبر برمجيات · المدرس: أ. أزهر عامر حسين</div><span class="tag">عملي</span></div>
+          <div class="time">11:30 – 2:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا ملاحظات مختبر إدارة الشبكات والتطبيقات العملية.</div>
+      </article>
+    </div>
+    <div class="general"><h3>📌 ملاحظات عامة ليوم الاثنين</h3><textarea data-key="mon_general" placeholder="واجبات أو ملاحظات عامة..."></textarea><div class="save-state"></div></div>
+  </section>
+
+  <section id="tue" class="day-panel">
+    <div class="section-title"><h2>الثلاثاء</h2><p>3 محاضرات</p></div>
+    <div class="schedule">
+      <article class="course">
+        <div class="course-top">
+          <div><h3>قواعد بيانات SQL / نظري</h3><div class="meta">القاعة: ق18 · المدرس: أ. طه ياسين عبد القادر</div><span class="tag">نظري</span></div>
+          <div class="time">8:30 – 10:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا أوامر SQL والملاحظات المهمة.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>تصميم المواقع الإلكترونية / نظري</h3><div class="meta">القاعة: ق17 · المدرس: ست نعم سالم محمد شيت</div><span class="tag">نظري</span></div>
+          <div class="time">10:30 – 12:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا عناصر HTML وCSS والملاحظات المهمة.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>مشروع بحث</h3><div class="meta">القاعة: مختبر · نوع المادة: مشروع</div><span class="tag">بحث</span></div>
+          <div class="time">12:30 – 2:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المشروع</label>
+        <div class="note-box">اكتب هنا أفكار المشروع والمصادر والمهام والملاحظات.</div>
+      </article>
+    </div>
+    <div class="general"><h3>📌 ملاحظات عامة ليوم الثلاثاء</h3><textarea data-key="tue_general" placeholder="واجبات أو ملاحظات عامة..."></textarea><div class="save-state"></div></div>
+  </section>
+
+  <section id="wed" class="day-panel">
+    <div class="section-title"><h2>الأربعاء</h2><p>محاضرتان عمليتان</p></div>
+    <div class="schedule">
+      <article class="course">
+        <div class="course-top">
+          <div><h3>قواعد بيانات SQL / عملي</h3><div class="meta">القاعة: مختبر شبكات · المدرسون: ست هدى شرابي عزيز، ست رغد حكمت متي</div><span class="tag">عملي</span></div>
+          <div class="time">8:30 – 11:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا الاستعلامات والتطبيقات العملية الخاصة بـ SQL.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>تصميم المواقع الإلكترونية / عملي</h3><div class="meta">القاعة: مختبر برمجيات · المدرسون: ست غادة رافع فتحي، ست باسمة محمود عبيد</div><span class="tag">عملي</span></div>
+          <div class="time">11:30 – 2:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا أكواد وتطبيقات تصميم المواقع الإلكترونية.</div>
+      </article>
+    </div>
+    <div class="general"><h3>📌 ملاحظات عامة ليوم الأربعاء</h3><textarea data-key="wed_general" placeholder="واجبات أو ملاحظات عامة..."></textarea><div class="save-state"></div></div>
+  </section>
+
+  <section id="thu" class="day-panel">
+    <div class="section-title"><h2>الخميس</h2><p>محاضرتان</p></div>
+    <div class="schedule">
+      <article class="course">
+        <div class="course-top">
+          <div><h3>جرائم حزب البعث في العراق</h3><div class="meta">القاعة: ق18 · المدرس: د. ميادة مهدي صالح</div><span class="tag">نظري</span></div>
+          <div class="time">8:30 – 10:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات المحاضرة</label>
+        <div class="note-box">اكتب هنا ملاحظات مادة جرائم حزب البعث في العراق.</div>
+      </article>
+      <article class="course">
+        <div class="course-top">
+          <div><h3>ورشة تخصصية</h3><div class="meta">القاعة: مختبر برمجيات · المدرس: د. فراس شوكت حامد</div><span class="tag">ورشة</span></div>
+          <div class="time">10:30 – 1:30</div>
+        </div>
+        <label class="note-label">📝 ملاحظات الورشة</label>
+        <div class="note-box">اكتب هنا ملاحظات الورشة والمهام المهمة.</div>
+      </article>
+    </div>
+    <div class="general"><h3>📌 ملاحظات عامة ليوم الخميس</h3><textarea data-key="thu_general" placeholder="واجبات أو ملاحظات عامة..."></textarea><div class="save-state"></div></div>
+  </section>
+
+  <div class="info-strip">
+    🔒 <strong>وضع القراءة فقط:</strong> الملاحظات يضيفها صاحب الموقع، والطلاب يمكنهم قراءتها فقط.
+  </div>
+</main><button id="backTop" aria-label="العودة إلى الأعلى">↑</button>
+
+<footer>
+  <div>ملاحظات الجدول الأسبوعي · شعبة A</div>
+  <div style="margin-top:6px"> · 2026 / 2027 · للقراءة فقط</div>
+</footer>
+
+<script>
+(function(){
+  const days=['sun','mon','tue','wed','thu'];
+  const buttons=document.querySelectorAll('.day-btn');
+  const panels=document.querySelectorAll('.day-panel');
+  const cards=document.querySelectorAll('.overview-card');
+
+  function setActive(){
+    const hash=location.hash.replace('#','');
+    const day=days.includes(hash)?hash:'sun';
+    buttons.forEach(b=>b.classList.toggle('active',b.dataset.day===day));
+    cards.forEach(c=>c.classList.toggle('today',c.dataset.jump===day));
+  }
+
+  window.goTo=function(day){
+    if(days.includes(day)) location.hash=day;
+  };
+
+  window.addEventListener('hashchange',setActive);
+  setActive();
+
+  const boxes=[...document.querySelectorAll('.note-box')];
+  const filled=boxes.filter(x=>x.textContent.trim()&&!x.textContent.includes('اكتب هنا')).length;
+  const count=document.getElementById('noteCount');
+  const bar=document.getElementById('progressBar');
+  if(count) count.textContent=filled+' ملاحظات منشورة';
+  if(bar) bar.style.width=Math.min(100,filled/boxes.length*100)+'%';
+
+  const input=document.getElementById('searchInput');
+  const no=document.getElementById('noResults');
+  const courses=[...document.querySelectorAll('.course')];
+  function search(){
+    const q=input.value.trim().toLowerCase();
+    let n=0;
+    courses.forEach(c=>{
+      const ok=!q||c.innerText.toLowerCase().includes(q);
+      c.style.display=ok?'':'none';
+      if(ok)n++;
+    });
+    no.style.display=q&&!n?'block':'none';
+  }
+  if(input) input.addEventListener('input',search);
+  const searchBtn=document.getElementById('searchBtn');
+  if(searchBtn) searchBtn.addEventListener('click',search);
+
+  const top=document.getElementById('backTop');
+  if(top){
+    window.addEventListener('scroll',()=>top.classList.toggle('show',window.scrollY>450));
+    top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  }
+
+  const names=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const date=document.getElementById('liveDate');
+  if(date) date.textContent=names[new Date().getDay()]+' · الفصل الأول 2026 / 2027';
+})();
+</script>
+</body>
+</html>
